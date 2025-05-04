@@ -29,23 +29,23 @@ body {
 .soundboard {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 4vmin;
+    gap: 2vmin;
     width: 100%;
     max-width: 1000px;
-    padding: 3vmin;
+    padding: 2vmin;
     justify-content: center;
     margin: 0 auto;
 }
 
 .sound-button {
     position: relative;
-    width: 85%;
+    width: 95%;
     aspect-ratio: 1/1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     cursor: pointer;
@@ -69,7 +69,7 @@ body {
 }
 
 .sound-button .button-content {
-    padding: 12px;
+    padding: 6px;
     z-index: 1;
     display: flex;
     flex-direction: column;
@@ -81,8 +81,8 @@ body {
 }
 
 .sound-button .button-title {
-    font-size: min(6vw, min(4vh, 2.2rem));
-    line-height: 1.2;
+    font-size: min(5.5vw, min(4vh, 2rem));
+    line-height: 1.1;
     text-align: center;
     width: 100%;
     display: flex;
@@ -90,7 +90,7 @@ body {
     justify-content: center;
     word-break: break-word;
     hyphens: auto;
-    padding: 5px;
+    padding: 3px;
     height: 100%;
     letter-spacing: 0;
 }
@@ -170,12 +170,13 @@ body {
 @media (max-width: 900px) {
     .soundboard {
         grid-template-columns: repeat(2, 1fr);
+        gap: 1.5vmin;
     }
 }
 
 @media (max-width: 600px) {
     .soundboard {
-        gap: 3vmin;
+        gap: 1.5vmin;
     }
     
     .youtube-embed iframe {
