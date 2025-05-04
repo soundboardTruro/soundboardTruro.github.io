@@ -1,64 +1,51 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Add click event handlers to all sound buttons
-    document.querySelectorAll('.sound-button').forEach(button => {
-        // The click handlers are already in the HTML, but we'll enhance them
-        // with animation effects when a video is opened
-        
-        // These effects will apply to any new embed containers
-        const observer = new MutationObserver(mutations => {
-            mutations.forEach(mutation => {
-                if (mutation.addedNodes.length) {
-                    mutation.addedNodes.forEach(node => {
-                        if (node.classList && node.classList.contains('youtube-embed')) {
-                            handleNewEmbed(node);
-                        }
-                    });
-                }
-            });
-        });
-        
-        observer.observe(document.body, { childList: true });
-    });
+    // Set up event delegation for the soundboard container
+    const soundboard = document.getElementById('soundboard');
     
-    function handleNewEmbed(embed) {
-        // First prevent any direct clicks from closing the container
-        // while it's animating in
-        embed.addEventListener('click', (e) => {
-            if (e.target === embed) {
+    if (soundboard) {
+        // Use event delegation to handle embed container management
+        document.body.addEventListener('click', (e) => {
+            const embed = e.target.closest('.youtube-embed');
+            if (embed && (e.target === embed || e.target.classList.contains('close-embed'))) {
                 closeEmbed(embed);
             }
         });
         
-        // Get the close button and add click handler
-        const closeButton = embed.querySelector('.close-embed');
-        if (closeButton) {
-            closeButton.addEventListener('click', () => {
-                closeEmbed(embed);
-            });
-        }
-        
-        // Show with animation (small delay to ensure DOM is ready)
-        setTimeout(() => {
-            embed.classList.add('visible');
-        }, 10);
-        
-        // Add escape key handler
+        // Handle escape key for closing embeds
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                closeEmbed(embed);
+                const embed = document.querySelector('.youtube-embed.visible');
+                if (embed) {
+                    closeEmbed(embed);
+                }
             }
         });
     }
     
+    // Function to handle the embed visibility
+    window.showEmbed = function(embedContainer) {
+        // Prevent body scrolling
+        document.body.classList.add('modal-open');
+        
+        // Make the container visible with CSS animations
+        requestAnimationFrame(() => {
+            embedContainer.classList.add('visible');
+        });
+    };
+    
+    // Function to close embeds
     function closeEmbed(embed) {
-        // Animate out
+        // Start animation out via CSS
         embed.classList.remove('visible');
+        
+        // Re-enable scrolling
+        document.body.classList.remove('modal-open');
         
         // Remove after animation completes
         setTimeout(() => {
             if (embed.parentNode) {
                 embed.parentNode.removeChild(embed);
             }
-        }, 500); // Should match the CSS transition duration
+        }, 300); // Match the CSS transition duration
     }
 }); 
