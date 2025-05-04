@@ -12,9 +12,9 @@ html, body {
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
-    background-color: #f4f4f4;
+    background-color: #f9f9f9;
     color: #333;
 }
 
@@ -45,21 +45,27 @@ body {
     flex-direction: column;
     justify-content: center;
     border: none;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     cursor: pointer;
     color: white;
-    font-weight: bold;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-    background-color: #FF0000 !important;
-    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    background-color: #FF0000;
+    transition: all 0.2s ease-out;
     margin: 0 auto;
 }
 
 .sound-button:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    background-color: #CC0000;
+}
+
+.sound-button:active {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .sound-button .button-content {
@@ -71,10 +77,11 @@ body {
     align-items: center;
     height: 100%;
     width: 100%;
+    position: relative;
 }
 
 .sound-button .button-title {
-    font-size: min(6vw, min(4vh, 2.5rem));
+    font-size: min(6vw, min(4vh, 2.2rem));
     line-height: 1.2;
     text-align: center;
     width: 100%;
@@ -85,6 +92,7 @@ body {
     hyphens: auto;
     padding: 5px;
     height: 100%;
+    letter-spacing: 0;
 }
 
 .youtube-embed {
@@ -93,29 +101,69 @@ body {
     left: 0;
     width: 100%;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0);
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    pointer-events: none;
+}
+
+.youtube-embed.visible {
+    background: rgba(0, 0, 0, 0.9);
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: all;
 }
 
 .youtube-embed iframe {
     width: 90%;
     max-width: 1000px;
     height: 60vh;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transform: translateY(30px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition-delay: 0.15s;
+}
+
+.youtube-embed.visible iframe {
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .youtube-embed .close-embed {
-    background: #ff0000;
+    background: #FF0000;
     color: white;
     border: none;
     border-radius: 4px;
-    padding: 0.7rem 1.2rem;
-    margin-top: 1rem;
+    padding: 8px 24px;
+    margin-top: 1.5rem;
     cursor: pointer;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition-delay: 0.25s;
+}
+
+.youtube-embed.visible .close-embed {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.youtube-embed .close-embed:hover {
+    background: #CC0000;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
 }
 
 /* Responsive adjustments */
@@ -133,4 +181,7 @@ body {
     .youtube-embed iframe {
         height: 45vh;
     }
-} 
+}
+
+/* Import the Noto Sans font */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700&display=swap'); 
