@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Sound Board</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Use dvh for mobile browsers that account for address bar */
+      height: 100dvh;
+    }
+
+    .stage {
+      position: relative;
+      height: 100dvh;
+      background-image: url('background.jpg');
+      background-size: auto 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 40px 20px;
+      overflow: hidden;
+      width: calc(100dvh * (1439 / 1801));
+      max-width: 100vw;
+    }
+
+    .top-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .sound-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      /* Prevent double-tap zoom on mobile */
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .sound-btn:active {
+      transform: scale(0.92);
+      filter: brightness(0.9);
+    }
+
+    .sound-btn img {
+      width: 100%;
+      max-width: 120px;
+      height: auto;
+      object-fit: contain;
+      /* Prevent long-press image save on mobile */
+      pointer-events: none;
+      draggable: false;
+    }
+
+    .bell-container {
+      display: flex;
+      justify-content: center;
+      padding-top: 20px;
+    }
+
+    .bell-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 50%;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .bell-btn:active {
+      transform: scale(0.92);
+      filter: brightness(0.9);
+    }
+
+    .bell-btn img {
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stage">
+
+    <!-- 8 buttons: Row 1 = Sue, Row 2 = Will -->
+    <div class="top-buttons">
+
+      <!-- Sue Row (top) -->
+      <button class="sound-btn" data-sound="Sue1.mp3">
+        <img src="Sue1.png" alt="Sue 1" draggable="false">
+      </button>
+      <button class="sound-btn" data-sound="Sue2.mp3">
+        <img src="Sue2.png" alt="Sue 2" draggable="false">
+      </button>
+      <button class="sound-btn" data-sound="Sue3.mp3">
+        <img src="Sue3.png" alt="Sue 3" draggable="false">
+      </button>
+      <button class="sound-btn" data-sound="Sue4.mp3">
+        <img src="Sue4.png" alt="Sue 4" draggable="false">
+      </button>
+
+      <!-- Will Row (bottom) -->
+      <button class="sound-btn" data-sound="Will1.mp3">
+        <img src="Will1.png" alt="Will 1" draggable="false">
+      </button>
+      <button class="sound-btn" data-sound="Will2.mp3">
+        <img src="Will2.png" alt="Will 2" draggable="false">
+      </button>
+      <button class="sound-btn" data-sound="Will3.mp3">
+        <img src="Will3.png" alt="Will 3" draggable="false">
+      </button>
+      <button class="sound-btn" data-sound="Will4.mp3">
+        <img src="Will4.png" alt="Will 4" draggable="false">
+      </button>
+
+    </div>
+
+    <!-- Bell button at the bottom -->
+    <div class="bell-container">
+      <button class="bell-btn" data-sound="bell.mp3">
+        <img src="bell.jpg" alt="Bell" draggable="false">
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    // Preload all audio files for instant playback on mobile
+    const sounds = {};
+    const files = [
+      'Sue1.mp3','Sue2.mp3','Sue3.mp3','Sue4.mp3',
+      'Will1.mp3','Will2.mp3','Will3.mp3','Will4.mp3',
+      'bell.mp3'
+    ];
+    files.forEach(f => {
+      const a = new Audio(f);
+      a.preload = 'auto';
+      sounds[f] = a;
+    });
+
+    function playSound(file) {
+      // Always create a new instance so sounds overlap on repeated taps
+      const audio = new Audio(file);
+      audio.play().catch(() => {});
+    }
+
+    // Use touchstart for instant response on mobile (no 300ms delay)
+    document.querySelectorAll('[data-sound]').forEach(btn => {
+      btn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        playSound(this.dataset.sound);
+      }, { passive: false });
+
+      // Also keep click for desktop
+      btn.addEventListener('click', function() {
+        playSound(this.dataset.sound);
+      });
+    });
+  </script>
+
+</body>
+</html>
