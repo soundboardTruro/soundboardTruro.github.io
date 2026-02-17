@@ -25,11 +25,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      /* Use dvh for mobile browsers that account for address bar */
       height: 100dvh;
     }
 
+    /* Start invisible, JS fades in once everything is loaded */
     .stage {
+      opacity: 0;
+      transition: opacity 0.6s ease;
       position: relative;
       height: 100dvh;
       background-image: url('background.jpg');
@@ -44,6 +46,10 @@
       overflow: hidden;
       width: calc(100dvh * (1439 / 1801));
       max-width: 100vw;
+    }
+
+    .stage.loaded {
+      opacity: 1;
     }
 
     .top-buttons {
@@ -67,13 +73,13 @@
       min-width: 0;
       min-height: 0;
       overflow: hidden;
-      /* Prevent double-tap zoom on mobile */
       touch-action: manipulation;
       user-select: none;
       -webkit-user-select: none;
     }
 
-    .sound-btn:active {
+    .sound-btn:active,
+    .sound-btn.pressed {
       transform: scale(0.92);
       filter: brightness(0.9);
     }
@@ -82,7 +88,6 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      /* Prevent long-press image save on mobile */
       pointer-events: none;
       draggable: false;
     }
@@ -104,7 +109,8 @@
       -webkit-user-select: none;
     }
 
-    .bell-btn:active {
+    .bell-btn:active,
+    .bell-btn.pressed {
       transform: scale(0.92);
       filter: brightness(0.9);
     }
@@ -119,7 +125,7 @@
 </head>
 <body>
 
-  <div class="stage">
+  <div class="stage" id="stage">
 
     <!-- 8 buttons: Row 1 = Sue, Row 2 = Will -->
     <div class="top-buttons">
@@ -164,21 +170,56 @@
   </div>
 
   <script>
-    // Preload all audio files for instant playback on mobile
-    const sounds = {};
-    const files = [
+    const stage = document.getElementById('stage');
+
+    // All images and audio to load before revealing
+    const imageFiles = [
+      'background.jpg',
+      'Sue1.png','Sue2.png','Sue3.png','Sue4.png',
+      'Will1.png','Will2.png','Will3.png','Will4.png',
+      'bell.jpg'
+    ];
+
+    const audioFiles = [
       'Sue1.mp3','Sue2.mp3','Sue3.mp3','Sue4.mp3',
       'Will1.mp3','Will2.mp3','Will3.mp3','Will4.mp3',
       'bell.mp3'
     ];
-    files.forEach(f => {
+
+    let loaded = 0;
+    const total = imageFiles.length + audioFiles.length;
+
+    function checkAllLoaded() {
+      loaded++;
+      if (loaded >= total) {
+        stage.classList.add('loaded');
+      }
+    }
+
+    // Preload images
+    imageFiles.forEach(src => {
+      const img = new Image();
+      img.onload = checkAllLoaded;
+      img.onerror = checkAllLoaded; // Count failures too so we don't hang
+      img.src = src;
+    });
+
+    // Preload audio
+    const sounds = {};
+    audioFiles.forEach(f => {
       const a = new Audio(f);
       a.preload = 'auto';
+      a.addEventListener('canplaythrough', checkAllLoaded, { once: true });
+      a.addEventListener('error', checkAllLoaded, { once: true });
       sounds[f] = a;
     });
 
+    // Fallback: fade in after 5s regardless, in case any asset is missing
+    setTimeout(() => {
+      stage.classList.add('loaded');
+    }, 5000);
+
     function playSound(file) {
-      // Always create a new instance so sounds overlap on repeated taps
       const audio = new Audio(file);
       audio.play().catch(() => {});
     }
@@ -187,8 +228,17 @@
     document.querySelectorAll('[data-sound]').forEach(btn => {
       btn.addEventListener('touchstart', function(e) {
         e.preventDefault();
+        this.classList.add('pressed');
         playSound(this.dataset.sound);
       }, { passive: false });
+
+      btn.addEventListener('touchend', function() {
+        this.classList.remove('pressed');
+      });
+
+      btn.addEventListener('touchcancel', function() {
+        this.classList.remove('pressed');
+      });
 
       // Also keep click for desktop
       btn.addEventListener('click', function() {
