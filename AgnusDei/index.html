@@ -6,7 +6,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link href="./favicon.ico" rel="icon" />
-  <title>Agnus Dei</title>
+  <title>Sound Board</title>
   <style>
     * {
       margin: 0;
@@ -220,7 +220,17 @@
       stage.classList.add('loaded');
     }, 5000);
 
+    // Unlock audio on first interaction (required by mobile browsers)
+    let audioUnlocked = false;
+    function unlockAudio() {
+      if (audioUnlocked) return;
+      audioUnlocked = true;
+      const silent = new Audio();
+      silent.play().catch(() => {});
+    }
+
     function playSound(file) {
+      unlockAudio();
       const audio = new Audio(file);
       audio.play().catch(() => {});
     }
